@@ -25,6 +25,14 @@ def run_cli():
         help="do not create a logfile .txt of the results",
     )
 
+    # add the optional by subdir argument
+    parser.add_argument(
+        "-b",
+        "--bysubdir",
+        action="store_true",
+        help="tally the counts by subdirectory of the root directory",
+    )
+
     # parse the arguments
     args = parser.parse_args()
 
@@ -38,6 +46,9 @@ def run_cli():
     # set log file preference
     create_log = False if args.nolog else True
 
+    # set by subdir preference
+    by_subdir = True if args.bysubdir else False
+
     # send config to the program
-    config = {"root_dir": root_dir, "create_log": create_log}
+    config = {"root_dir": root_dir, "create_log": create_log, "by_subdir": by_subdir}
     return config

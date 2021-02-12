@@ -24,12 +24,12 @@ def write_size_log(msg, log_dir):
     print(f"Created {log_path}")
 
 
-def get_size(root_dir, create_log=True):
+def get_size(start_dir, log):
     total_size = 0
     files = 0
-    print(f"Calculating total size of {root_dir}...")
+    print(f"Calculating total size of {start_dir}...")
 
-    for dirpath, dirnames, filenames in os.walk(root_dir):
+    for dirpath, dirnames, filenames in os.walk(start_dir):
         for f in filenames:
             filepath = os.path.join(dirpath, f)
             # skip if it is a symbolic link
@@ -38,10 +38,21 @@ def get_size(root_dir, create_log=True):
                 files += 1
 
     total_size_pretty = prettify_bytes(total_size)
-    msg = f"Finished! {files:,} files containing {total_size_pretty} in {root_dir}"
+    msg = f"Finished! {files:,} files containing {total_size_pretty} in {start_dir}"
 
-    if create_log:
-        write_size_log(msg, root_dir)
+    if log:
+        write_size_log(msg, start_dir)
 
     print(msg)
     return total_size
+
+
+def run(root_dir, create_log=True, by_subdir=False):
+    if not by_subdir:
+        get_size(start_dir=root_dir, log=create_log)
+    else:
+        contents = os.listdir(root_dir)
+        for item in contents:
+            item_path = root_dir + os.sep + item
+            if os.path.isdir(item_path):
+                get_size(start_dir=item_path, log=create_log)
